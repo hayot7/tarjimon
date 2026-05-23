@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Professional AI Tarjimon</title>
+
+<link rel="icon" type="image/png" href="logo.png">
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  font-family:Arial, sans-serif;
+  background:linear-gradient(135deg,#0f172a,#1e293b);
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+  color:white;
+}
+
+.container{
+  width:100%;
+  max-width:1000px;
+  background:#1e293b;
+  border-radius:25px;
+  padding:25px;
+  box-shadow:0 0 30px rgba(0,0,0,0.5);
+}
+
+h1{
+  text-align:center;
+  margin-bottom:25px;
+  font-size:40px;
+}
+
+.top-controls{
+  display:flex;
+  gap:10px;
+  margin-bottom:20px;
+  flex-wrap:wrap;
+}
+
+select{
+  flex:1;
+  min-width:150px;
+  padding:15px;
+  border:none;
+  border-radius:12px;
+  background:#334155;
+  color:white;
+  font-size:16px;
+}
+
+.swap-btn{
+  width:60px;
+  background:#2563eb;
+  border:none;
+  border-radius:12px;
+  color:white;
+  font-size:22px;
+  cursor:pointer;
+}
+
+.text-area{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+
+.box{
+  background:#334155;
+  border-radius:20px;
+  padding:15px;
+}
+
+textarea{
+  width:100%;
+  height:250px;
+  background:transparent;
+  border:none;
+  outline:none;
+  color:white;
+  font-size:20px;
+  resize:none;
+}
+
+.result{
+  min-height:250px;
+  font-size:20px;
+  line-height:1.6;
+  word-wrap:break-word;
+}
+
+.buttons{
+  display:flex;
+  gap:10px;
+  margin-top:20px;
+  flex-wrap:wrap;
+}
+
+button{
+  flex:1;
+  padding:15px;
+  border:none;
+  border-radius:15px;
+  background:#2563eb;
+  color:white;
+  font-size:18px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+button:hover{
+  background:#1d4ed8;
+}
+
+.footer{
+  margin-top:20px;
+  text-align:center;
+  color:#94a3b8;
+}
+
+@media(max-width:800px){
+
+  h1{
+    font-size:30px;
+  }
+
+  .text-area{
+    grid-template-columns:1fr;
+  }
+
+  textarea{
+    height:180px;
+    font-size:18px;
+  }
+
+  .result{
+    min-height:180px;
+    font-size:18px;
+  }
+
+  button{
+    font-size:16px;
+  }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🌍 Professional AI Tarjimon</h1>
+
+<div class="top-controls">
+
+<select id="from">
+
+<option value="auto">Auto Detect</option>
+<option value="uz">Uzbek</option>
+<option value="en">English</option>
+<option value="ru">Russian</option>
+<option value="tr">Turkish</option>
+<option value="fr">French</option>
+<option value="de">German</option>
+<option value="es">Spanish</option>
+<option value="it">Italian</option>
+<option value="ar">Arabic</option>
+
+</select>
+
+<button class="swap-btn" onclick="swapLanguages()">
+⇄
+</button>
+
+<select id="to">
+
+<option value="en">English</option>
+<option value="uz">Uzbek</option>
+<option value="ru">Russian</option>
+<option value="tr">Turkish</option>
+<option value="fr">French</option>
+<option value="de">German</option>
+<option value="es">Spanish</option>
+<option value="it">Italian</option>
+<option value="ar">Arabic</option>
+
+</select>
+
+</div>
+
+<div class="text-area">
+
+<div class="box">
+<textarea
+id="text"
+placeholder="Matn kiriting..."
+></textarea>
+</div>
+
+<div class="box">
+<div
+class="result"
+id="result"
+>
+Tarjima shu yerda chiqadi...
+</div>
+</div>
+
+</div>
+
+<div class="buttons">
+
+<button onclick="translateText()">
+Tarjima qilish
+</button>
+
+<button onclick="copyText()">
+Copy
+</button>
+
+<button onclick="speakText()">
+🔊 Ovoz
+</button>
+
+<button onclick="clearText()">
+Tozalash
+</button>
+
+</div>
+
+<div class="footer">
+Google Translate Engine
+</div>
+
+</div>
+
+<script>
+
+async function translateText(){
+
+  const text =
+    document.getElementById("text").value;
+
+  const from =
+    document.getElementById("from").value;
+
+  const to =
+    document.getElementById("to").value;
+
+  if(text.trim() === ""){
+    alert("Matn yozing!");
+    return;
+  }
+
+  document.getElementById("result").innerText =
+    "Tarjima qilinmoqda...";
+
+  try{
+
+    const url =
+      `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${from}&tl=${to}&dt=t&q=${encodeURIComponent(text)}`;
+
+    const response = await fetch(url);
+
+    const data = await response.json();
+
+    let translated = "";
+
+    data[0].forEach(item => {
+      translated += item[0];
+    });
+
+    document.getElementById("result").innerText =
+      translated;
+
+  }catch(error){
+
+    console.log(error);
+
+    document.getElementById("result").innerText =
+      "Xatolik yuz berdi";
+
+  }
+
+}
+
+function copyText(){
+
+  const text =
+    document.getElementById("result").innerText;
+
+  navigator.clipboard.writeText(text);
+
+  alert("Nusxalandi!");
+
+}
+
+function clearText(){
+
+  document.getElementById("text").value = "";
+
+  document.getElementById("result").innerText =
+    "Tarjima shu yerda chiqadi...";
+
+}
+
+function swapLanguages(){
+
+  const from =
+    document.getElementById("from");
+
+  const to =
+    document.getElementById("to");
+
+  let temp = from.value;
+
+  from.value = to.value;
+
+  to.value = temp;
+
+}
+
+function speakText(){
+
+  const text =
+    document.getElementById("result").innerText;
+
+  const speech =
+    new SpeechSynthesisUtterance(text);
+
+  speech.lang =
+    document.getElementById("to").value;
+
+  speechSynthesis.speak(speech);
+
+}
+
+</script>
+
+</body>
+</html>
